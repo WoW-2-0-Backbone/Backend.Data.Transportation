@@ -1,0 +1,37 @@
+name: Build & Test Backend for Development
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'test/**'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0'
+  SOLUTION_PATH: 'src/WoW2.Backbone.Backend.Data.Transportation.sln'
+  TESTS_SOLUTION_PATH: 'tests/WoW2.Backbone.Backend.Data.Transportation.Tests.sln'
+  PACKAGES_PATH: 'src'
+
+jobs:
+  build_and_test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ${{ env.TESTS_SOLUTION_PATH }} --verbosity normal

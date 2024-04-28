@@ -1,0 +1,129 @@
+name: Build & Test Backend for Production, Publish Release Version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0'
+  SOLUTION_PATH: 'src/WoW2.Backbone.Backend.Data.Transportation.sln'
+  TESTS_SOLUTION_PATH: 'tests/WoW2.Backbone.Backend.Data.Transportation.Tests.sln'
+  PACKAGES_PATH: 'src'
+  PACKAGE_SOURCE: 'https://api.nuget.org/v3/index.json'
+
+jobs:
+  build_and_test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION_PATH }} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ${{ env.TESTS_SOLUTION_PATH }} --verbosity normal
+
+  publish_prerelease:
+    needs: build_and_test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find Packable Projects
+        run: |
+          echo "Finding projects with PackageId defined..."
+          PACKABLE_PROJECTS=$(find ${{ env.PACKAGES_PATH }} -name '*.csproj' -print0 | xargs -0 -I {} bash -c "grep -q '<PackageId>' {} && echo {} || true" | tr '\n' ' ')
+          echo "Packable projects found:"
+          echo "$PACKABLE_PROJECTS"
+          echo "PACKABLE_PROJECTS=${PACKABLE_PROJECTS}" >> $GITHUB_ENV
+
+      - name: Pack and Push Each Project
+        run: |
+          for CS_PROJ in $PACKABLE_PROJECTS
+            do
+            # Correctly extract the major version from DOTNET_VERSION
+            DOTNET_MAJOR_VERSION=$(echo "${{ env.DOTNET_VERSION }}" | cut -d '.' -f1)  
+          
+            # Extract Package ID
+            PACKAGE_ID=$(grep '<PackageId>' "$CS_PROJ" | sed -n 's/.*<PackageId>\(.*\)<\/PackageId>.*/\1/p')
+            if [ -z "$PACKAGE_ID" ]; then
+              echo "Skipping project $CS_PROJ, because PackageId not specified"
+              continue
+            fi
+
+            # Extract Version
+            VERSION=$(grep '<Version>' "$CS_PROJ" | sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p')
+            if [ -z "$VERSION" ]; then
+              echo "Error: Package $PACKAGE_ID is invalid, because Version is not specified"
+              exit 1
+            fi
+
+            # Extract the major, minor, patch and alpha numbers
+            MAJOR=$(echo $VERSION | cut -d '.' -f1)
+            MINOR=$(echo $VERSION | cut -d '.' -f2)
+            PATCH=$(echo $VERSION | cut -d '.' -f3 | grep -o '^[0-9]*')
+
+            # Check if the major version matches the .NET version
+            if [[ "$MAJOR" != "$DOTNET_MAJOR_VERSION" ]]; then
+              echo "Error: Package $PACKAGE_ID is invalid, because of major version mismatch. Expected major version: $DOTNET_MAJOR_VERSION, but found $MAJOR"
+              exit 1
+            fi
+
+            # Fetch latest version from NuGet
+            echo "Fetching latest version for package $PACKAGE_ID from NuGet..."
+            LATEST_VERSION=$(nuget list $PACKAGE_ID -PreRelease | grep "$PACKAGE_ID" | awk '{print $2}')
+            echo "Latest version fetched: $LATEST_VERSION"
+
+            if [[ ! -z "$LATEST_VERSION" && $LATEST_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[0-9]+)?)?$ ]]; then
+
+              # Extract major, minor, and patch version from latest version
+              LATEST_MAJOR=$(echo $LATEST_VERSION | cut -d '.' -f1)
+              LATEST_MINOR=$(echo $LATEST_VERSION | cut -d '.' -f2)
+              LATEST_PATCH=$(echo $LATEST_VERSION | cut -d '.' -f3 | grep -o '^[0-9]*')
+
+              # Validate current version against the latest version
+              if echo $LATEST_VERSION | grep -q 'alpha'; then
+                # If there's an alpha version, current version should match all major, minor, patch numbers
+                if [[ $MAJOR -ne $LATEST_MAJOR || $MINOR -ne $LATEST_MINOR || $PATCH -ne $LATEST_PATCH ]]; then
+                echo "Error: Package $PACKAGE_ID is invalid, because current version does not match the latest alpha version"
+                exit 1
+                fi
+              else
+                # If the alpha version wasn't released, release version shouldn't be published
+                echo "Error: Package $PACKAGE_ID is invalid, because the alpha version wasn't released"
+                exit 1
+              fi
+            else 
+              echo "Error: Package $PACKAGE_ID is invalid, first version should be an alpha version"
+              exit 1
+            fi
+
+            # Calculate current release version without alpha suffix
+            RELEASE_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+            echo "Current release version of package $PACKAGE_ID is $RELEASE_VERSION"
+
+            # Pack the project with the new version
+            echo "Packing project $PACKAGE_ID with version $RELEASE_VERSION"
+            dotnet pack $CS_PROJ -c Release -o ./nupkgs /p:PackageVersion=$RELEASE_VERSION
+    
+            # Push the package to NuGet
+            echo "Pushing package ${PACKAGE_ID}.${RELEASE_VERSION}.nupkg"
+            dotnet nuget push "./nupkgs/${PACKAGE_ID}.${RELEASE_VERSION}.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source $PACKAGE_SOURCE --no-service-endpoint --skip-duplicate
+          done
