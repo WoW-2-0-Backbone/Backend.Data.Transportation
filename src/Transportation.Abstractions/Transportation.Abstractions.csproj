@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Title>Transportation.Abstractions</Title>
+        <PackageId>Transportation.Abstractions</PackageId>
+        <PackageIcon>wow2.png</PackageIcon>
+        <Description>Abstractions for Transportation data models</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>transportation, abstractions, seed-data</PackageTags>
+        <Version>8.0.0-alpha.0</Version>
+        <Authors>WoW 2.0 Team</Authors>
+        <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/WoW-2-0-Backbone/Backend.Data.Transportation/src/Transportation.Abstractions</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/WoW-2-0-Backbone/Backend.Data.Transportation/src/Transportation.Abstractions</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <Content Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="wow2.png" Pack="true" PackagePath="\"/>
+        <Content Include="wow2.png" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+</Project>
