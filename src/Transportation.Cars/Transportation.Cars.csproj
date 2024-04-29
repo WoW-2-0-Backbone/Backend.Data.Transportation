@@ -7,8 +7,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Title>WoW2.Backbone.Data.Transportation.Cars.Abstractions</Title>
-        <PackageId>WoW2.Backbone.Data.Transportation.Cars.Abstractions</PackageId>
+        <Title>WoW2.Backbone.Data.Transportation.Cars</Title>
+        <PackageId>WoW2.Backbone.Data.Transportation.Cars</PackageId>
         <PackageIcon>wow2.png</PackageIcon>
         <Description>Abstractions for global manufactured Car data models and data providers</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>

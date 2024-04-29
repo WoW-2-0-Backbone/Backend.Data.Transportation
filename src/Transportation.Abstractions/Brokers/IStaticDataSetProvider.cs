@@ -10,6 +10,7 @@ public interface IStaticDataSetProvider<out TData>
     /// Gets enumerable source of static data set
     /// </summary>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <exception cref="ArgumentException">If cancellation token can't be cancelled. See <see href="https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken.none?view=net-8.0">CancellationToken.None</see> for more details.</exception>
     /// <returns>Enumerable source of data</returns>
     IEnumerable<TData> GetData(CancellationToken cancellationToken = default);
 }
