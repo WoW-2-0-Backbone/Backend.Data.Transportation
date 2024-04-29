@@ -13,7 +13,7 @@
         <Description>Abstractions for global manufactured Car data models and data providers</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>transportation, abstractions, cars, cars-data, seed-data</PackageTags>
-        <Version>8.0.0-alpha.0</Version>
+        <Version>8.0.0-alpha.1</Version>
         <Authors>WoW 2.0 Team</Authors>
         <PackageLicenseUrl>https://licenses.nuget.org/MIT</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/WoW-2-0-Backbone/Backend.Data.Transportation/src/Transportation.Cars</PackageProjectUrl>
@@ -29,11 +29,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Transportation.Cars.Abstractions\Transportation.Cars.Abstractions.csproj"/>
+        <PackageReference Include="Sep" Version="0.5.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Sep" Version="0.5.2"/>
+        <PackageReference Include="WoW2.Backbone.Data.Transportation.Cars.Abstractions" Version="8.0.0-alpha.1" />
     </ItemGroup>
 
     <ItemGroup>
