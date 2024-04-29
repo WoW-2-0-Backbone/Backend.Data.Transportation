@@ -10,7 +10,7 @@
         <Title>WoW2.Backbone.Data.Transportation.Cars</Title>
         <PackageId>WoW2.Backbone.Data.Transportation.Cars</PackageId>
         <PackageIcon>wow2.png</PackageIcon>
-        <Description>Abstractions for global manufactured Car data models and data providers</Description>
+        <Description>Global manufactured cars static data and data providers</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>transportation, abstractions, cars, cars-data, seed-data</PackageTags>
         <Version>8.0.0-alpha.1</Version>
