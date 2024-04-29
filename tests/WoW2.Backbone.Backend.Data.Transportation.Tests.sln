@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cars", "Cars", "{57C1BFE8-3D6E-4259-841A-3BA941225CBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transportation.Cars", "..\src\Transportation.Cars\Transportation.Cars.csproj", "{88A5A36F-DEB7-4628-81FF-FCD3A70306F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transportation.Cars.UnitTests", "Transportation.Cars.UnitTests\Transportation.Cars.UnitTests.csproj", "{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transportation.Cars.PerformanceTests", "Transportation.Cars.PerformanceTests\Transportation.Cars.PerformanceTests.csproj", "{A3B26397-E0E5-498A-87C3-6D2B7B3D030C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{88A5A36F-DEB7-4628-81FF-FCD3A70306F3} = {57C1BFE8-3D6E-4259-841A-3BA941225CBB}
+		{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C} = {57C1BFE8-3D6E-4259-841A-3BA941225CBB}
+		{A3B26397-E0E5-498A-87C3-6D2B7B3D030C} = {57C1BFE8-3D6E-4259-841A-3BA941225CBB}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88A5A36F-DEB7-4628-81FF-FCD3A70306F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88A5A36F-DEB7-4628-81FF-FCD3A70306F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88A5A36F-DEB7-4628-81FF-FCD3A70306F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88A5A36F-DEB7-4628-81FF-FCD3A70306F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D1E9161-2E4F-4939-8A77-BDD23B8B4A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B26397-E0E5-498A-87C3-6D2B7B3D030C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B26397-E0E5-498A-87C3-6D2B7B3D030C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B26397-E0E5-498A-87C3-6D2B7B3D030C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B26397-E0E5-498A-87C3-6D2B7B3D030C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
