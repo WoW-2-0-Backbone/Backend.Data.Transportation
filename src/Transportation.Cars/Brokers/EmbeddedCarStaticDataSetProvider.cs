@@ -15,6 +15,12 @@ public class EmbeddedCarStaticDataSetProvider : ICarStaticDataSetProvider
 
     public IEnumerable<ICar> GetData(CancellationToken cancellationToken = default)
     {
+        if (cancellationToken.CanBeCanceled)
+            throw new ArgumentException("Cancellation token can't be cancelled.", nameof(cancellationToken));
+
+        if (cancellationToken.IsCancellationRequested)
+            yield break;
+
         // Read car data from each file
         foreach (var fileStream in GetResourceStreams())
         {
