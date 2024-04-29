@@ -89,6 +89,12 @@ jobs:
               exit 1
             fi
 
+            # Check if the alpha suffix and alpha number exist
+            if [[ -z "$ALPHA_SUFFIX" || -z "$ALPHA_NUMBER" ]]; then
+              echo "Error: Package $PACKAGE_ID is invalid, because Version does not have an alpha suffix and alpha number"
+              exit 1
+            fi
+
             # Fetch latest version from NuGet
             echo "Fetching latest version for package $PACKAGE_ID from NuGet..."
             LATEST_VERSION=$(nuget list $PACKAGE_ID -PreRelease | grep "$PACKAGE_ID" | awk '{print $2}')
@@ -102,21 +108,21 @@ jobs:
                 continue
               fi
 
-              # Check if the alpha suffix and alpha number exist
-              if [[ -z "$ALPHA_SUFFIX" || -z "$ALPHA_NUMBER" ]]; then
-                echo "Error: Package $PACKAGE_ID is invalid, because Version does not have an alpha suffix and alpha number"
-                exit 1
-              fi
-
               # Extract major, minor, and patch version from latest version
               LATEST_MAJOR=$(echo $LATEST_VERSION | cut -d '.' -f1)
               LATEST_MINOR=$(echo $LATEST_VERSION | cut -d '.' -f2)
               LATEST_PATCH=$(echo $LATEST_VERSION | cut -d '.' -f3 | grep -o '^[0-9]*')
 
+              # Validate current version is not lower than the latest version
+              if { [[ $MINOR -lt $LATEST_MINOR ]] || { [[ $MINOR -ge $LATEST_MINOR ]] && [[ $PATCH -lt $LATEST_PATCH ]]; } }; then
+                echo "Error: Package $PACKAGE_ID is invalid, because either the minor or patch version is lower than the latest version"
+                exit 1
+              fi
+
               # Validate current version against the latest version
               if echo $LATEST_VERSION | grep -q 'alpha'; then
-                if [[ $MINOR -lt $LATEST_MINOR || ($MINOR -eq $LATEST_MINOR && $PATCH -lt $LATEST_PATCH) || $ALPHA_NUMBER -ne 0 ]]; then
-                  echo "Error: Package $PACKAGE_ID is invalid, because either the minor or patch version is not equal or greater than the latest version, or the alpha number is not 0"
+                if { [[ $MINOR -gt $LATEST_MINOR ]] || [[ $PATCH -gt $LATEST_PATCH ]]; } && [[ $ALPHA_NUMBER -ne 0 ]]; then
+                  echo "Error: Package $PACKAGE_ID is invalid, because either the minor or patch version is greater than the latest version and the alpha number is not 0"
                   exit 1
                 fi
 
