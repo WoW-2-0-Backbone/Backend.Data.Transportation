@@ -87,7 +87,7 @@ jobs:
 
             # Fetch latest version from NuGet
             echo "Fetching latest version for package $PACKAGE_ID from NuGet..."
-            LATEST_VERSION=$(nuget list $PACKAGE_ID -PreRelease | grep "$PACKAGE_ID" | awk '{print $2}')
+            LATEST_VERSION=$(nuget list $PACKAGE_ID -PreRelease | awk -v pkg="$PACKAGE_ID" '$1 == pkg {print $2}' | tail -n 1)
             echo "Latest version fetched: $LATEST_VERSION"
 
             if [[ ! -z "$LATEST_VERSION" && $LATEST_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[0-9]+)?)?$ ]]; then
